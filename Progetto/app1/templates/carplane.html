@@ -1,0 +1,129 @@
+<!doctype html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8">
+  <title>{% if error_code == 403 %}Errore 403 - Accesso Negato{% else %}Classificazione Immagine{% endif %}</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f5f7fa;
+      margin: 0;
+      padding: 0;
+      color: #333;
+    }
+    header {
+      background: #2c3e50;
+      color: white;
+      padding: 15px 30px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    header a {
+      color: #f39c12;
+      text-decoration: none;
+      font-weight: bold;
+      margin-left: 15px;
+    }
+    header a:hover {
+      text-decoration: underline;
+    }
+    main {
+      max-width: 600px;
+      margin: 50px auto;
+      background: white;
+      padding: 30px;
+      border-radius: 12px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+      text-align: center;
+    }
+    h1 {
+      margin-bottom: 20px;
+      font-size: 1.8rem;
+      color: #2c3e50;
+    }
+    form {
+      margin: 20px 0;
+    }
+    input[type="file"] {
+      display: block;
+      margin: 15px auto;
+    }
+    input[type="submit"] {
+      background: #3498db;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 6px;
+      color: white;
+      font-size: 1rem;
+      cursor: pointer;
+      transition: background 0.3s ease;
+    }
+    input[type="submit"]:hover {
+      background: #2980b9;
+    }
+    .result {
+      margin-top: 25px;
+    }
+    .result h2 {
+      color: #27ae60;
+    }
+    .result img {
+      margin-top: 15px;
+      border-radius: 8px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+    }
+    .error {
+      color: #e74c3c;
+      font-size: 1.2rem;
+      margin-bottom: 25px;
+    }
+    a.button {
+      display: inline-block;
+      background: #3498db;
+      color: white;
+      padding: 12px 20px;
+      border-radius: 6px;
+      text-decoration: none;
+      font-weight: bold;
+      transition: background 0.3s ease;
+    }
+    a.button:hover {
+      background: #2980b9;
+    }
+  </style>
+</head>
+<body>
+
+  {% if user %}
+  <header>
+    <div>Benvenuto, {{ user.get('preferred_username', 'Utente') }}</div>
+    <div><a href="{{ url_for('logout') }}">Logout</a></div>
+  </header>
+  {% endif %}
+
+  <main>
+    {% if error_code == 403 %}
+      <h1>🚫 Errore 403</h1>
+      <p class="error">Non hai l'autorizzazione per accedere a questa pagina.</p>
+      <a class="button" href="{{ url_for('logout') }}">Torna al login</a>
+    {% else %}
+      <h1>Carica un'immagine</h1>
+      <p><em>Il sistema riconoscerà se è un <strong>aereo</strong> o una <strong>macchina</strong>.</em></p>
+
+      <form method="POST" enctype="multipart/form-data">
+        <input type="file" name="file" accept="image/*" required>
+        <input type="submit" value="Carica">
+      </form>
+
+      {% if prediction %}
+      <div class="result">
+        <h2>Predizione: {{ prediction }}</h2>
+        <img src="{{ url_for('static', filename='uploads/' + filename) }}" width="300">
+      </div>
+      {% endif %}
+    {% endif %}
+  </main>
+
+</body>
+</html>
