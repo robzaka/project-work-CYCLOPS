@@ -1,1 +1,1 @@
-# project-work-CYCLOPS
+docker-compose up -d
